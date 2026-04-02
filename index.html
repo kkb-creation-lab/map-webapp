@@ -197,10 +197,29 @@
     /* ── PRINT STYLES ── */
     @media print {
       #sidebar, #main, .no-print { display: none !important; }
-      #print-area { position: static !important; background: white !important; }
-      #print-content { box-shadow: none !important; max-width: 100% !important; }
+      #print-area {
+        position: static !important;
+        background: white !important;
+        display: block !important;
+      }
+      /* Sembunyikan wrapper abu-abu, tampilkan langsung konten */
+      #print-area > div:last-child {
+        background: white !important;
+        padding: 0 !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+      }
+      #print-content {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        width: 210mm !important;
+        max-width: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+      }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-      @page { margin: 0; size: A4; }
+      @page { margin: 0; size: A4 portrait; }
     }
     .print-doc { display: none; }
 
@@ -1470,8 +1489,8 @@ function buildDOHalf(doc, copyLabel, accentColor) {
       <td style="padding:5px 7px;text-align:center;border-bottom:1px solid #e2e8f0;font-size:14px">&#9744;</td>
     </tr>`).join('');
 
-  return `<div style="font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;background:#fff;box-sizing:border-box">
-  <div style="background:${accentColor};height:5px;width:100%"></div>
+  return `<div style="font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;background:#fff;box-sizing:border-box;height:100%;display:flex;flex-direction:column">
+  <div style="background:${accentColor};height:5px;width:100%;flex-shrink:0"></div>
   <div style="background:${copyBg};padding:3px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid ${accentColor}22">
     <span style="font-size:10px;color:${accentColor};font-weight:700">MITRA AGUNG PERKASA &mdash; DELIVERY ORDER</span>
     <span style="background:${accentColor};color:#fff;font-size:9.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;padding:2px 10px;border-radius:99px">${copyLabel}</span>
@@ -1521,13 +1540,13 @@ function buildDOHalf(doc, copyLabel, accentColor) {
     </table>
   </div>
   ${doc.notes ? `<div style="padding:0 28px 6px"><div style="background:#fef3e0;border-left:3px solid #e8a020;border-radius:3px;padding:6px 12px;font-size:10.5px;color:#78350f"><strong>Notes:</strong> ${doc.notes}</div></div>` : ''}
-  <div style="padding:0 28px 8px">
-    <div style="border:1px dashed #cbd5e1;border-radius:6px;padding:6px 14px;font-size:10.5px;color:#64748b">
+  <div style="padding:0 28px 6px;flex-shrink:0">
+    <div style="border:1px dashed #cbd5e1;border-radius:6px;padding:5px 14px;font-size:10.5px;color:#64748b">
       <strong style="color:#334155">Goods received in good condition — quantity and description verified as stated above.</strong>
       Any discrepancy must be reported at the time of delivery.
     </div>
   </div>
-  <div style="padding:6px 28px 10px;display:flex;justify-content:space-between;border-top:1px solid #e2e8f0">
+  <div style="margin-top:auto;padding:6px 28px 8px;display:flex;justify-content:space-between;border-top:1px solid #e2e8f0;flex-shrink:0">
     <div style="text-align:center">
       <div style="font-size:10px;color:#94a3b8;margin-bottom:1px">Dispatched by,</div>
       <div style="width:130px;border-bottom:1px solid #94a3b8;margin:36px auto 6px"></div>
@@ -1541,23 +1560,24 @@ function buildDOHalf(doc, copyLabel, accentColor) {
       <div style="font-size:10px;color:#94a3b8">Name, Date &amp; Stamp</div>
     </div>
   </div>
-  <div style="background:${accentColor};height:4px;width:100%"></div>
+  <div style="background:${accentColor};height:4px;width:100%;flex-shrink:0"></div>
 </div>`;
 }
 
 function buildDOHTML(doc) {
   const half1 = buildDOHalf(doc, 'CUSTOMER COPY', '#0369a1');
   const half2 = buildDOHalf(doc, 'INVOICE COPY',  '#166534');
-  return `<div style="font-family:'Segoe UI',Arial,sans-serif;width:794px">
-  ${half1}
-  <div style="display:flex;align-items:center;gap:8px;padding:4px 20px;background:#f1f5f9;border-top:1.5px dashed #94a3b8;border-bottom:1.5px dashed #94a3b8;user-select:none">
-    <span style="font-size:16px;color:#94a3b8">✂</span>
-    <div style="flex:1;border-top:none"></div>
-    <span style="font-size:9.5px;color:#94a3b8;font-weight:600;letter-spacing:.5px;white-space:nowrap">CUT HERE</span>
+  /* A4 = 210mm × 297mm. Cut line = 7mm. Each half = (297-7)/2 = 145mm */
+  return `<div style="font-family:'Segoe UI',Arial,sans-serif;width:210mm;height:297mm;overflow:hidden;box-sizing:border-box;background:#fff">
+  <div style="height:145mm;overflow:hidden;box-sizing:border-box">${half1}</div>
+  <div style="height:7mm;display:flex;align-items:center;gap:8px;padding:0 20px;background:#f1f5f9;border-top:1.5px dashed #94a3b8;border-bottom:1.5px dashed #94a3b8;box-sizing:border-box;user-select:none">
+    <span style="font-size:14px;color:#94a3b8">✂</span>
     <div style="flex:1"></div>
-    <span style="font-size:16px;color:#94a3b8;transform:scaleX(-1);display:inline-block">✂</span>
+    <span style="font-size:9px;color:#94a3b8;font-weight:600;letter-spacing:.5px;white-space:nowrap">CUT HERE</span>
+    <div style="flex:1"></div>
+    <span style="font-size:14px;color:#94a3b8;transform:scaleX(-1);display:inline-block">✂</span>
   </div>
-  ${half2}
+  <div style="height:145mm;overflow:hidden;box-sizing:border-box">${half2}</div>
 </div>`;
 }
 
