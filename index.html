@@ -1567,9 +1567,15 @@ function buildDOHalf(doc, copyLabel, accentColor) {
 function buildDOHTML(doc) {
   const half1 = buildDOHalf(doc, 'CUSTOMER COPY', '#0369a1');
   const half2 = buildDOHalf(doc, 'INVOICE COPY',  '#166534');
-  /* A4 = 210mm × 297mm. Cut line = 7mm. Each half = (297-7)/2 = 145mm */
-  return `<div style="font-family:'Segoe UI',Arial,sans-serif;width:210mm;height:297mm;overflow:hidden;box-sizing:border-box;background:#fff">
-  <div style="height:145mm;overflow:hidden;box-sizing:border-box">${half1}</div>
+  /*
+   * A4 = 210mm × 297mm
+   * Printer unprintable margin: 5mm top + 5mm bottom = 10mm
+   * Printable height: 297 - 10 = 287mm
+   * Cut line: 7mm
+   * Each half: (287 - 7) / 2 = 140mm
+   */
+  return `<div style="font-family:'Segoe UI',Arial,sans-serif;width:210mm;height:297mm;overflow:hidden;box-sizing:border-box;background:#fff;padding:5mm 0">
+  <div style="height:140mm;overflow:hidden;box-sizing:border-box">${half1}</div>
   <div style="height:7mm;display:flex;align-items:center;gap:8px;padding:0 20px;background:#f1f5f9;border-top:1.5px dashed #94a3b8;border-bottom:1.5px dashed #94a3b8;box-sizing:border-box;user-select:none">
     <span style="font-size:14px;color:#94a3b8">✂</span>
     <div style="flex:1"></div>
@@ -1577,7 +1583,7 @@ function buildDOHTML(doc) {
     <div style="flex:1"></div>
     <span style="font-size:14px;color:#94a3b8;transform:scaleX(-1);display:inline-block">✂</span>
   </div>
-  <div style="height:145mm;overflow:hidden;box-sizing:border-box">${half2}</div>
+  <div style="height:140mm;overflow:hidden;box-sizing:border-box">${half2}</div>
 </div>`;
 }
 
